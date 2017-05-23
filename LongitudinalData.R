@@ -1,8 +1,16 @@
+setwd("D:/eclipse/workspace/pollutantAnalysis")
+
+library(dplyr)
 
 LongitudinalData <- setRefClass("LongitudinalData",
 		methods=list(make_LD = function(x)
 				{			
 
+					data <- read.csv("MIE.csv")
+					data %>% select(visit) -> datum
+					
+					load(datum)
+					
 					u <- CompoundUnit$new(  micrograms = 100,
 							cubicmeter = 1 )
 					
@@ -25,7 +33,12 @@ LongitudinalData <- setRefClass("LongitudinalData",
 							measurement = m,
 							location = l)
 					
-					print( m$quantity$amount )				} ) 
+					print( m$quantity$amount )				
+				},load = function( visit ){
+					print(nrow(visit))
+	
+				}
+				) 
 )
 
 
