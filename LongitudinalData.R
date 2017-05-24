@@ -1,43 +1,49 @@
 setwd("D:/eclipse/workspace/pollutantAnalysis")
 
 library(dplyr)
+library(plyr)
 
 LongitudinalData <- setRefClass("LongitudinalData",
+		fields = list(measurements = "list"),
 		methods=list(make_LD = function(x)
 				{			
 
-					data <- read.csv("MIE.csv")
-					data %>% select(visit) -> datum
+					data <- read.csv("MIE - Copy.csv", header= TRUE)
+					data %>% select(visit,room,id,timepoint,value) -> datum
 					
 					load(datum)
+			
 					
-					u <- CompoundUnit$new(  micrograms = 100,
-							cubicmeter = 1 )
+		
+				},load = function( df ){
+					by(df, 1:nrow(df), function(row) {
+								visits <- par.gen$new()
+								visits$visit <- as.character(row$visit)
+								
+								u <- CompoundUnit$new(  micrograms = 1,
+														cubicmeter = 1 )
+												
+								q <- Quantity$new(amount = row$value,
+												  units = u )
+												
+								t <-  TimePoint$new(time = row$timepoint)
+								
+								m <- Measurement$new(
+										quantity = q,
+										timepoint = t,
+										Visit = visits)
+								
+								l <- Location$new( room = as.character(row$room))
+								
+								s <- Subject$new( id =  row$id,
+										measurement = m,
+										location = l)
+								
+										  
+							})
 					
-					q <- Quantity$new(amount = 100,
-							units = u )
-					
-					t <-  TimePoint$new(time = 50)
-					
-					visits <- par.gen$new()
-					visits$visit <- '0'
-					
-					m <- Measurement$new(
-							quantity = q,
-							timepoint = t,
-							Visit = visits)
-					
-					l <- Location$new( room = "bedroom")
-					
-					s <- Subject$new( id = 10,
-							measurement = m,
-							location = l)
-					
-					print( m$quantity$amount )				
-				},load = function( visit ){
-					print(nrow(visit))
-	
-				}
+					}
+				
 				) 
 )
 
