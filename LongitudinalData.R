@@ -12,8 +12,8 @@ LongitudinalData <- setRefClass("LongitudinalData",
 					data %>% select(visit,room,id,timepoint,value) -> datum
 					
 					load(datum)
-			
 					
+					measurements <<- list()
 		
 				},load = function( df ){
 					by(df, 1:nrow(df), function(row) {
@@ -39,7 +39,7 @@ LongitudinalData <- setRefClass("LongitudinalData",
 										measurement = m,
 										location = l)
 								
-										  
+								measurements <<- c( measurements, s )
 							})
 					
 					}
