@@ -71,6 +71,8 @@ Subject <- setRefClass("Subject",
 				summary = function()#Implement other summary methods in appropriate objects as per their responsibilities
 				{
 					paste("Subject summary ID [",id,"] Location [",location$summary(),"]")
+				},show = function(){
+					cat("Subject summary ID [",id,"] Location [",location$summary(),"]\n")
 				})
 )
 
@@ -225,21 +227,21 @@ LongitudinalData <- setRefClass("LongitudinalData",
 							visit0 %>% map(., function(x) {
 										total <<- total + as.numeric(x)
 									}	)
-							s <- paste("Total measurement for Vist 0 is \n",total)
+							s <- paste("Total measurement for Visit 0 is ",total)
 						}
 						if( length(visit1) != 0 ){
 							total <- 0
 						visit1 %>% map(., function(x) {
 									total <<- total + as.numeric(x)
 								}	)
-						s <- paste("Total measurement for Vist 1 is \n",total)
+						s <- paste("Total measurement for Visit 1 is ",total)
 						}
 						if( length(visit2) != 0 ){
 							total <- 0
 						visit2 %>% map(., function(x) {
 									total <<- total + as.numeric(x)
 								}	)
-						s <- paste("Total measurement for Vist 2 is ",total)
+						s <- paste("Total measurement for Visit 2 is ",total,"\n")
 						}
 					s
 					}
