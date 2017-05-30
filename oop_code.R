@@ -209,18 +209,39 @@ LongitudinalData <- setRefClass("LongitudinalData",
 									if (x$getid() == subject$getid() ){
 										m <<- x$getmeasurement()
 										if( m$getvisit()  == 0){
-											visit0 <<- c(visit0,m$getquantity() ) 
+											visit0 <<- c(visit0,m$getquantity()$amount ) 
 										}else
 										if( m$getvisit()  == 1){
-											visit1 <<- c(visit1,m$getquantity() ) 
+											visit1 <<- c(visit1,m$getquantity()$amount ) 
 										}else
 										if( m$getvisit()  == 2){
-											visit2 <<- c(visit2,m$getquantity() ) 
+											visit2 <<- c(visit2,m$getquantity()$amount ) 
 										}
 									}
 								})
-						s <- paste(visit0," ",visit1," ",visit2)
-						s
+						if( length(visit0) != 0 ){
+							
+							total <- 0
+							visit0 %>% map(., function(x) {
+										total <<- total + as.numeric(x)
+									}	)
+							s <- paste("Total measurement for Vist 0 is \n",total)
+						}
+						if( length(visit1) != 0 ){
+							total <- 0
+						visit1 %>% map(., function(x) {
+									total <<- total + as.numeric(x)
+								}	)
+						s <- paste("Total measurement for Vist 1 is \n",total)
+						}
+						if( length(visit2) != 0 ){
+							total <- 0
+						visit2 %>% map(., function(x) {
+									total <<- total + as.numeric(x)
+								}	)
+						s <- paste("Total measurement for Vist 2 is ",total)
+						}
+					s
 					}
 				}
 					
