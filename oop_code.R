@@ -79,7 +79,7 @@ Subject <- setRefClass("Subject",
 LongitudinalDatum <- setRefClass("LongitudinalDatum",
 		methods=list(subject = function(sub){
 					sub$getid()
-				},summary = function(sub){
+				},subsummary = function(sub){
 					if(is.character(sub) && sub == 'NA'){
 							sub
 					}else{
@@ -178,35 +178,52 @@ LongitudinalData <- setRefClass("LongitudinalData",
 				
 					)
 					
+					list(visit = measurementsvisit )
 				}
-				list(visit = measurementsvisit )
 			},
 				room = function( t, room ){
-					if( length(  t$visit) == 0 ){
-						t$visit
+					if( length( t) == 0 ){
+						c('NA')
 					}else{
 						measurementsvisitroom <- c()
 						t$visit %>% map(., function(x) {
 							if( x$getlocation()$getlocation() == room )
 								measurementsvisitroom <<- c(measurementsvisitroom,x)
 						})
-					measurementsvisitroom
+						if( length( measurementsvisitroom ) == 0 ){
+							c('NA')
+						}else{
+							measurementsvisitroom
+						}
 					}
 				},
 				summaries = function( subjects ){
 					summaries <- c()
-					lapply(subjects, function ( x ){
-								summaries <<- c( summaries, ld$summary(x))
+					if(is.character(subjects) && subjects == 'NA'){
+						subjects
+					}else{
+						measurements %>% map(., function(x) {
+									subjects %>% map(., function(y) {
+												if (x$getid() == y$getid() ){
+													m <<- x$getmeasurement()
+													summaries <<- c(summaries,m$getquantity()$amount)
+												}
+											})
 							})
-					summaries
+				
+					summaries %>% summary
+				}
 				},subjectsummary = function( subject ){
 					visit0 <- c()
 					visit1 <- c()
 					visit2 <- c()
+					visit0data <- ''
+					visit1data <- ''
+					visit2data <- ''
 					if(is.character(subject) && subject == 'NA'){
 						subject
 					}else{
-						s <- paste(summary(subject),"\n")
+						summarydata <- subsummary(subject)
 						measurements %>% map(., function(x) {
 									if (x$getid() == subject$getid() ){
 										m <<- x$getmeasurement()
@@ -227,23 +244,24 @@ LongitudinalData <- setRefClass("LongitudinalData",
 							visit0 %>% map(., function(x) {
 										total <<- total + as.numeric(x)
 									}	)
-							s <- paste("Total measurement for Visit 0 is ",total)
+							visit0data <- sprintf("Total measurement for Visit 0 is %f",total)
 						}
 						if( length(visit1) != 0 ){
 							total <- 0
-						visit1 %>% map(., function(x) {
+							visit1 %>% map(., function(x) {
 									total <<- total + as.numeric(x)
 								}	)
-						s <- paste("Total measurement for Visit 1 is ",total)
+							visit1data <- sprintf("Total measurement for Visit 1 is %f",total)
 						}
 						if( length(visit2) != 0 ){
 							total <- 0
-						visit2 %>% map(., function(x) {
+							visit2 %>% map(., function(x) {
 									total <<- total + as.numeric(x)
 								}	)
-						s <- paste("Total measurement for Visit 2 is ",total,"\n")
+							visit2data = sprintf("Total measurement for Visit 2 is %f",total)
 						}
-					s
+					finaldata <- cat( paste( summarydata, visit0data, visit1data, visit2data, sep="\n"))
+					finaldata
 					}
 				}
 					
